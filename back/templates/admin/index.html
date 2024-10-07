@@ -1,0 +1,138 @@
+{% extends 'admin/master.html' %}
+
+{% block head_css %}
+    {{ super() }}
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.svg') }}" sizes="64x64" />
+    <style>
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+        }
+
+        .navbar-logo {
+            width: 70px;
+            height: auto;
+            margin-right: 12px;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .navbar-nav {
+            display: flex;
+            justify-content: center; /* Вирівнюємо меню по центру */
+            gap: 10px;
+            flex-wrap: wrap; /* Дозволяємо перенесення пунктів меню */
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .navbar-nav li {
+            display: inline-block;
+        }
+
+        .navbar-nav a {
+            display: inline-block;
+            padding: 8px 15px;
+            font-size: 15px;
+            text-decoration: none;
+            color: #0056b3;
+            font-weight: 500;
+            transition: color 0.3s, background-color 0.3s;
+        }
+
+        .navbar-nav a:hover {
+            background-color: #e9ecef;
+            border-radius: 5px;
+            color: #003d73;
+        }
+
+        .logout-btn {
+            background-color: #f8f9fa;
+            border: 1px solid #cccccc;
+            color: #555;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        /* Лого і Logout у верхньому рядку, меню в нижньому */
+        .navbar-header,
+        .navbar-logout {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .navbar-logout {
+            justify-content: flex-end;
+            margin-left: auto;
+        }
+
+        /* Стилі для активної сторінки */
+        .navbar-nav a.active {
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+
+        /* Адаптивність */
+        @media (max-width: 768px) {
+            .navbar-nav {
+                justify-content: center; /* Меню не переноситься вертикально */
+                gap: 5px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block page_body %}
+    <div class="container{% if config.get('FLASK_ADMIN_FLUID_LAYOUT', False) %}-fluid{% endif %}">
+        <!-- Верхній рядок з логотипом і кнопкою Logout -->
+        <div class="navbar-header">
+            <!-- Логотип -->
+            <a class="navbar-brand" href="{{ admin_view.admin.url }}">
+                <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Logo" class="navbar-logo"/>
+            </a>
+
+            <!-- Кнопка Logout -->
+            <div class="navbar-logout">
+                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+
+        <!-- Меню в другому рядку -->
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="collapse navbar-collapse" id="admin-navbar-collapse">
+                {% block main_menu %}
+                    <ul class="navbar-nav">
+                        {{ layout.menu() | safe }}
+                    </ul>
+                {% endblock %}
+            </div>
+        </nav>
+
+        {% block messages %}
+            {{ layout.messages() }}
+        {% endblock %}
+
+        {% block body %}
+        {% endblock %}
+    </div>
+{% endblock %}

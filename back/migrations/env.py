@@ -1,0 +1,48 @@
+# migrations/env.py
+from __future__ import with_statement
+import sys
+import os
+from alembic import context
+from sqlalchemy import engine_from_config, pool
+
+# Добавьте путь к папке с моделями
+sys.path.append(os.path.join(os.path.dirname(__file__), '../models'))
+
+# Импортируйте объект db и модели
+from models import db, Flower
+
+# Убедитесь, что все модели используют один и тот же объект db
+target_metadata = db.metadata
+
+def run_migrations_offline():
+    """Run migrations in 'offline' mode."""
+    url = context.get_x_argument(as_dictionary=True).get('url')
+    context.configure(url=url, target_metadata=target_metadata, literal_binds=True)
+
+    with context.begin_transaction():
+        context.run_migrations()
+
+def run_migrations_online():
+    """Run migrations in 'online' mode."""
+    configuration = context.config
+    connectable = engine_from_config(
+        configuration.get_section(configuration.config_ini_section),
+        prefix='sqlalchemy.',
+        poolclass=pool.NullPool,
+    )
+
+    with connectable.connect() as connection:
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata,
+            compare_type=True
+        )
+
+        with context.begin_transaction():
+            context.run_migrations()
+
+if context.is_offline_mode():
+    run_migrations_offline()
+else:
+    run_migrations_online()
+
